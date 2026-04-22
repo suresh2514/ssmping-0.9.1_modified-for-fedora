@@ -1,0 +1,36 @@
+# Compiled object files
+*.o
+*.obj
+
+# Executables
+ssmping
+asmping
+ssmpingd
+mcfirst
+
+# Core dumps
+core
+core.*
+
+# Editor temporary files
+*~
+*.swp
+*.swo
+.*.swp
+.*.swo
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-*
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+*.a
+*.so
+*.dylib
+*.dll
+*.exe

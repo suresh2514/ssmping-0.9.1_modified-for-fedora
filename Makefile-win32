@@ -1,0 +1,20 @@
+CC=/opt/xmingw/bin/i386-mingw32msvc-gcc
+CFLAGS=-Wall -I/opt/xmingw/i386-mingw32msvc/include
+LIBPATH = /opt/xmingw/i386-mingw32msvc/lib
+OBJ = ssmpngcl.o ssmpingc.o
+
+all: ssmping asmping ssmpingd mcfirst
+
+ssmping: $(OBJ) joinch.o $(LIBPATH)/libwsock32.a $(LIBPATH)/libws2_32.a $(LIBPATH)/libdnsapi.a
+asmping: $(OBJ) joingrp.o $(LIBPATH)/libwsock32.a $(LIBPATH)/libws2_32.a $(LIBPATH)/libdnsapi.a
+mcfirst: $(OBJ) joinch.o joingrp.o $(LIBPATH)/libwsock32.a $(LIBPATH)/libws2_32.a $(LIBPATH)/libdnsapi.a
+ssmpingd: $(OBJ) $(LIBPATH)/libwsock32.a $(LIBPATH)/libws2_32.a $(LIBPATH)/libdnsapi.a
+
+clean:
+	rm -f $(OBJ) joinch.o joingrp.o ssmping asmping ssmpingd mcfirst
+
+install: ssmping asmping ssmpingd mcfirst
+	mv ssmping ssmping.exe
+	mv asmping asmping.exe
+	mv ssmpingd ssmpingd.exe
+	mv mcfirst mcfirst.exe

@@ -1,0 +1,97 @@
+ssmping/asmping/ssmpingd/mcfirst README
+
+Introduction
+
+ssmping is a tool for checking whether a host can receive SSM from
+another. If a host runst ssmpingd, users on other hosts can check
+that they receive from this host by running the ssmping tool.
+asmping is similar to ssmping, but checks for ASM rather than SSM.
+This package also contains a tool called mcfirst.
+
+How it works
+
+ssmpingd listens for ssmping requests at UDP port 4321, both IPv4
+and IPv6. ssmping is run as "ssmping host". ssmping will look up
+addresses for hostname if necessary (both IPv4 and IPv6 addresses)
+and then join (S,G) where S is the IP address, and G is either
+232.43.211.234 for IPv4 or ff3e::4321:1234 for IPv6. Next it will
+until interrupted, send a unicast UDP ping request to the host once
+per second. If the host is running ssmpingd, it will respond by
+sending the request packet back (only changing type from request
+to reply). The reply is sent back both by unicast and to the
+multicast group G that the client joined.
+
+asmping works pretty much like ssmping, but the group to use must
+be specified. Note that the group will be forced to end with 234
+for IPv4, and ::4321:1234 for IPv6.
+
+Example ssmping output:
+
+ssmping joined (S,G) = (2001:700:1:7:290:27ff:fe22:7186,ff3e::4321:1234)
+pinging S from 2001:630:d0:111:250:fcff:fe6a:42b3
+  unicast from 2001:700:1:7:290:27ff:fe22:7186, seq=0 dist=20 time=56.5ms
+  unicast from 2001:700:1:7:290:27ff:fe22:7186, seq=1 dist=20 time=58.6ms
+  unicast from 2001:700:1:7:290:27ff:fe22:7186, seq=2 dist=20 time=57.1ms
+  unicast from 2001:700:1:7:290:27ff:fe22:7186, seq=3 dist=20 time=58.5ms
+  unicast from 2001:700:1:7:290:27ff:fe22:7186, seq=4 dist=20 time=74.0ms
+  unicast from 2001:700:1:7:290:27ff:fe22:7186, seq=5 dist=20 time=60.7ms
+  unicast from 2001:700:1:7:290:27ff:fe22:7186, seq=6 dist=20 time=56.5ms
+multicast from 2001:700:1:7:290:27ff:fe22:7186, seq=6 dist=12 time=60.9ms
+  unicast from 2001:700:1:7:290:27ff:fe22:7186, seq=7 dist=20 time=61.1ms
+multicast from 2001:700:1:7:290:27ff:fe22:7186, seq=7 dist=12 time=64.1ms
+  unicast from 2001:700:1:7:290:27ff:fe22:7186, seq=8 dist=20 time=70.9ms
+multicast from 2001:700:1:7:290:27ff:fe22:7186, seq=8 dist=12 time=73.2ms
+
+This shows that it took about 6s for the multicast tree to be
+established. The first 6 multicast packets got lost. It also
+shows the round-trip time for the unicast and multicat (note that
+the multicast is really unicast in one direction). This shows here
+that there is roughly 3-4ms additional delay for the multicat
+packets. It also shows that the unicast packets have travelled 20
+hops, while multicast only 12 hops. This shows that there probably
+is some tunneling for multicast. This is measured by having
+ssmpingd send all packets with a TTL/hop-limit of 64.
+
+Building
+
+On most systems you can just type "make". On Solaris or Windows
+try one of the alternate Makefiles. If your system does not
+support SSM, you can still use asmping and ssmpingd. If
+ssmping build fails, try "make asmping" and "make ssmpingd".
+
+Usage
+
+ssmpingd is run without arguments. ssmping takes hostname or IP
+address as argument. asmping takes group and hostname/address as
+arguments. See man pages for details.
+
+mcfirst
+
+mcfirst is a tool to check whether you can receive a given
+multicast transmission. It supports both ASM and SSM, and IPv4
+and IPv6. You run it specifying multicast group (and source if
+SSM) and port number. It will then run until it receives a single
+multicast packet, and tell you how long it took. Optionally you
+may specify how many packets and/or for how many seconds it shall
+run. If you specify how long to run, it will also tell you how
+many bits and packets per second were received. This tool will
+be built together with the ssmping tools.
+
+Credits
+
+The ssmping idea was proposed by Pavan Namburi, Kamil Sarac and
+Kevin C. Almeroth in the paper
+http://www.utdallas.edu/~ksarac/research/publications/CIIT04-1.pdf
+
+I was also inspired to work on this from discussions with Mickael
+Hoerdt who has contributed with several ideas.
+
+License
+
+See top of the individual source files.
+
+Bugs/feedback
+
+I would be happy for any feedback.
+
+2006-06-05 Stig Venaas <venaas@uninett.no>

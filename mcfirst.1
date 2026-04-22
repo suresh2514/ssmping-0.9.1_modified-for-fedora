@@ -1,0 +1,70 @@
+.\" Copyright (C) 2006  Stig Venaas <venaas@uninett.no>
+.TH mcfirst "1" "User Manuals"
+.SH NAME
+mcfirst \- check if you can receive IPv4/IPv6 multicast
+.SH SYNOPSIS
+.B mcfirst
+[
+.B \-46vr
+] [
+.B \-I
+.I interface
+] [
+.B \-c
+.I count
+] [
+.B \-t
+.I time
+] [
+.I source
+]
+.I group
+.I port
+
+.SH DESCRIPTION
+.B mcfirst
+can be used to check whether one can receive multicast packets from a host. The host may send any type of
+multicast packets, any application, IPv4 or IPv6, ASM or SSM.
+.B mcfirst
+joins the specified (source) and group, and listens to the specified port.
+.B mcfirst will by default exit when the first packet is received, and print how long it waited.
+.SH OPTIONS
+The options are as follows.
+.TP
+.B \-4
+Force IPv4
+.TP
+.B \-6
+Force IPv6
+.TP
+.B \-v
+Print version
+.TP
+.B \-r
+Print rate information only
+.TP
+\fB-I\fR \fIinterface\fR
+Interface to join on
+.TP
+\fB-c\fR \fIcount\fR
+Stop after receiving
+.I count
+packets. Default is 1 unless time limit is specified
+.TP
+\fB-t\fR \fItime\fR
+Exit after
+.I time
+seconds. Default is to exit after the first packet. If both
+.I count
+and
+.I time
+are specified, mcfirst will exit as soon as one of them is satisfied.
+.SH SEE ALSO
+ssmping(1) a tool for checking whether can receive SSM.
+.TP
+dbeacon(1) a distributed beacon multicast implementation.
+.SH BUGS
+Please report them to Stig Venaas <venaas@uninett.no>, the author of this tool.
+.SH HISTORY
+\fBmcfirst\fR was developed by Stig Venaas during the
+early days of the m6bone, the IPv6 multicast backbone.

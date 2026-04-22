@@ -1,0 +1,22 @@
+PREFIX ?= /usr/local
+CFLAGS ?= -D_POSIX_C_SOURCE -D__EXTENSIONS__ -D_XPG4_2
+LDFLAGS ?= -lsocket  -lnsl 
+
+all: asmping ssmpingd mcfirst
+
+OBJ = ssmpngcl.o ssmpingc.o
+
+ssmping: $(OBJ) joinch.o
+asmping: $(OBJ) joingrp.o
+ssmpingd: $(OBJ)
+mcfirst: $(OBJ) joinch.o joingrp.o
+
+install: asmping ssmpingd mcfirst
+	install -D asmping $(DESTDIR)$(PREFIX)/bin/asmping
+	install -D ssmpingd $(DESTDIR)$(PREFIX)/bin/ssmpingd
+	install -D mcfirst $(DESTDIR)$(PREFIX)/bin/mcfirst
+	install -D asmping.1 $(DESTDIR)$(PREFIX)/man/man1/asmping.1
+	install -D mcfirst.1 $(DESTDIR)$(PREFIX)/man/man1/mcfirst.1
+
+clean:
+	rm -f $(OBJ) joinch.o joingrp.o asmping ssmpingd mcfirst

@@ -1,0 +1,85 @@
+.\" Copyright (C) 2005  Stig Venaas <venaas@uninett.no>
+.\" $Id: asmping.1,v 1.1 2005/10/18 14:50:31 sv Exp $
+.TH asmping "1" "User Manuals"
+.SH NAME
+asmping \- check if you can receive IPv4/IPv6 multicast data from an internet
+host
+.SH SYNOPSIS
+.B asmping
+[
+.B \-46v
+] [
+.B \-I
+.I interface
+] [
+.B \-c
+.I count
+] [
+.B \-s
+.I size
+]
+.I group
+.I host
+.sp
+.B ssmpingd
+
+.SH DESCRIPTION
+.B asmping
+and
+.B ssmpingd
+are network level multicast management tools that can be used to check whether
+one can receive multicast packets via ASM from a host.
+The host target given to
+.B asmping
+must run the
+.B ssmpingd
+daemon, which listens on UDP port
+.B 4321
+for IPv4 and IPv6 unicast requests.
+When it receives one, it responds to the specified multicast group which
+.B asmping
+just have joined.
+Note that one can not use arbitrary groups. Independent of what group is
+specified, the last quarter of the address is forced to be
+.B 234
+or
+.B ::4321:1234
+for IPv4 or IPv6 respectively.
+.SH OPTIONS
+For
+.B ssmpingd
+there are no options.
+For
+.B asmping
+the options are as follows.
+.TP
+.B \-4
+Force IPv4
+.TP
+.B \-6
+Force IPv6
+.TP
+.B \-v
+Print client and server version information.
+.TP
+\fB-I\fR \fIinterface\fR
+Interface to join on
+.TP
+\fB-c\fR \fIcount\fR
+Stop after sending (and receiving)
+.I count
+requests (and replies)
+.TP
+\fB-s\fR \fIsize\fR
+Request replies to have a size of
+.I size
+bytes
+.SH SEE ALSO
+ssmping(1) a tool for checking whether can receive SSM.
+.TP
+dbeacon(1) a distributed beacon multicast implementation.
+.SH BUGS
+Please report them to Stig Venaas <venaas@uninett.no>, the author of this tool.
+.SH HISTORY
+\fBasmping\fR and \fBssmpingd\fR were developed by Stig Venaas during the
+early days of the m6bone, the IPv6 multicast backbone.
