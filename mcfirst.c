@@ -58,16 +58,20 @@ int main(int argc, char **argv) {
     
     namelen = (mcaddr.ss_family == AF_INET ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6));
 
-#ifdef WIN32
     {
 	struct sockaddr_storage any = mcaddr;
 	setaddr(&any, NULL, "::", "0.0.0.0");
 	if (bind(s, (struct sockaddr *)&any, namelen) < 0)
 	    errx("bind [INADDR_ANY]");
     }
-#else    
-    if (bind(s, (struct sockaddr *)&mcaddr, namelen) < 0)
-	errx("bind [multicast]");
+#if defined(SO_BINDTODEVICE) && !defined(WIN32)
+    if (intface) {
+	char ifname[IF_NAMESIZE];
+	if (if_indextoname(intface, ifname) == NULL)
+	    errx("if_indextoname");
+	if (setsockopt(s, SOL_SOCKET, SO_BINDTODEVICE, ifname, strlen(ifname)) < 0)
+	    errx("setsockopt SO_BINDTODEVICE");
+    }
 #endif
      /* using name to specify interface is wrong, only problem for old API */
     recvbuflen = sizeof(recvbuf);
