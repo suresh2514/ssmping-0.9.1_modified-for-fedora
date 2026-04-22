@@ -7,6 +7,10 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
+
 #include <sys/types.h>
 #include <sys/time.h>
 #include <ctype.h>

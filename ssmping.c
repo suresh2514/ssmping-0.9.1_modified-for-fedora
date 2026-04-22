@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
     uint16_t size;
     uint32_t intface;
     struct sockaddr_storage name, ucaddr, mcaddr, grpaddr;
-    size_t namelen;
+    socklen_t namelen;
 #ifdef WIN32
     WORD wVersionRequested;
     WSADATA wsaData;
