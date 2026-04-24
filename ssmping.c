@@ -46,16 +46,6 @@ int main(int argc, char **argv) {
     
     setport((struct sockaddr *)&name, 0);
 
-#if defined(SO_BINDTODEVICE) && !defined(WIN32)
-    if (intface) {
-	char ifname[IF_NAMESIZE];
-	if (if_indextoname(intface, ifname) == NULL)
-	    errx("if_indextoname");
-	if (setsockopt(us, SOL_SOCKET, SO_BINDTODEVICE, ifname, strlen(ifname)) < 0)
-	    errx("setsockopt SO_BINDTODEVICE on unicast socket");
-    }
-#endif
-
     if (bind(us, (struct sockaddr *)&name, namelen) < 0)
 	errx("bind");
 
@@ -64,39 +54,20 @@ int main(int argc, char **argv) {
 
     if (getsockname(us, (struct sockaddr *)&name, &namelen) == -1)
 	errx("getsockname");
-
-    /* Set multicast group address with family from name, address from mcaddr/default */
+    
     grpaddr = name;
     setaddr(&grpaddr, group ? &mcaddr : NULL, "ff3e::4321:1234", "232.43.211.234");
-
-    /* Copy port from ucaddr (server's port 4321) for multicast reception */
-    switch (grpaddr.ss_family) {
-    case AF_INET:
-	((struct sockaddr_in *)&grpaddr)->sin_port = ((struct sockaddr_in *)&ucaddr)->sin_port;
-	break;
-    case AF_INET6:
-	((struct sockaddr_in6 *)&grpaddr)->sin6_port = ((struct sockaddr_in6 *)&ucaddr)->sin6_port;
-	break;
-    }
-
-#if defined(SO_BINDTODEVICE) && !defined(WIN32)
-    /* Set SO_BINDTODEVICE before binding for better multicast routing */
-    if (intface) {
-	char ifname[IF_NAMESIZE];
-	if (if_indextoname(intface, ifname) == NULL)
-	    errx("if_indextoname");
-	if (setsockopt(ms, SOL_SOCKET, SO_BINDTODEVICE, ifname, strlen(ifname)) < 0)
-	    errx("setsockopt SO_BINDTODEVICE");
-    }
-#endif
-
-    /* Bind multicast socket to INADDR_ANY with port 4321 */
+#ifdef WIN32
     {
-	struct sockaddr_storage any = grpaddr;
+	struct sockaddr_storage any = name;
 	setaddr(&any, NULL, "::", "0.0.0.0");
 	if (bind(ms, (struct sockaddr *)&any, namelen) < 0)
-	    errx("bind [multicast]");
+	    errx("bind [ANY]");
     }
+#else    
+    if (bind(ms, (struct sockaddr *)&grpaddr, namelen) < 0)
+	errx("bind [multicast]");
+#endif
      /* using name to specify interface is wrong, only problem for old API */
     joinchannel(ms, (struct sockaddr *)&ucaddr,
 		(struct sockaddr *)&grpaddr, intface, (struct sockaddr *)&name);

@@ -173,11 +173,6 @@ void prep_sock(int family, int s) {
     if (setsockopt(s, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(on)) == -1)
 	errx("setsockopt SO_REUSEADDR");
 
-#ifdef SO_REUSEPORT
-    if (setsockopt(s, SOL_SOCKET, SO_REUSEPORT, (char *)&on, sizeof(on)) == -1)
-	errx("setsockopt SO_REUSEPORT");
-#endif
-
 #ifdef SO_TIMESTAMP
     if (setsockopt(s, SOL_SOCKET, SO_TIMESTAMP, (char *)&on, sizeof(on)) == -1)
 	errx("setsockopt SO_TIMESTAMP");
@@ -192,10 +187,6 @@ void prep_sock(int family, int s) {
 	if (setsockopt(s, IPPROTO_IPV6, IPV6_HOPLIMIT, (char *)&on, sizeof(on)) == -1)
 	    errx("setsockopt IPV6_HOPLIMIT");
 #endif
-#ifdef IPV6_RECVPKTINFO
-	if (setsockopt(s, IPPROTO_IPV6, IPV6_RECVPKTINFO, &on, sizeof(on)) == -1)
-	    errx("setsockopt IPV6_RECVPKTINFO");
-#endif
 	break;
     case AF_INET:
 #ifdef IP_RECVTTL
@@ -204,17 +195,6 @@ void prep_sock(int family, int s) {
 #else
 	if (setsockopt(s, IPPROTO_IP, IP_TTL, (char *)&on, sizeof(on)) == -1)
 	    errx("setsockopt IP_TTL");
-#endif
-#ifdef IP_PKTINFO
-	if (setsockopt(s, IPPROTO_IP, IP_PKTINFO, &on, sizeof(on)) == -1)
-	    errx("setsockopt IP_PKTINFO");
-#endif
-#ifdef IP_MULTICAST_ALL
-	{
-	    int off = 0;
-	    if (setsockopt(s, IPPROTO_IP, IP_MULTICAST_ALL, &off, sizeof(off)) == -1)
-		errx("setsockopt IP_MULTICAST_ALL");
-	}
 #endif
 	break;
     }
